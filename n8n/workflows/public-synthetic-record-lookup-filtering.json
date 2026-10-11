@@ -1,0 +1,72 @@
+{
+  "name": "Record Lookup and Filtering",
+  "nodes": [
+    {
+      "parameters": {},
+      "name": "Run invented lookup fixture",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "public-record-node-1"
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "const rows=[{\"ID\":\"S001\",\"Full Name\":\"Alex Example\",\"First Name\":\"Alex\",\"Last Name\":\"Example\",\"Phone\":\"202-555-0101\",\"Email\":\"alex@example.invalid\",\"Events\":\"Gardening\",\"Manager\":\"No\",\"Active\":\"Yes\"},{\"ID\":\"S002\",\"Full Name\":\"Alex Sample\",\"First Name\":\"Alex\",\"Last Name\":\"Sample\",\"Phone\":\"202-555-0102\",\"Email\":\"sample@example.invalid\",\"Events\":\"Driving\",\"Manager\":\"No\",\"Active\":\"Yes\"}];return [{json:{rows,query:{query_column:\"Full Name\",query_value:\"Alex\"},principal:{userId:\"synthetic-reader\",read:true},scope:\"Invented local fixture\"}}];"
+      },
+      "name": "Invented volunteer rows",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        240,
+        0
+      ],
+      "id": "public-record-node-2"
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "// Independent reproduction of observed string-column contains; no providers.\nfunction baselineLookup(rows,query_column,query_value){return rows.filter(row=>String(row[query_column]).includes(query_value));}\r\n\nconst columns=['ID','Full Name','First Name','Last Name','Phone','Email','Events','Manager','Active'];\nconst fail=code=>{throw new Error(code)};\nfunction volunteerLookup(rows,query,principal){\n  if(!principal||typeof principal.userId!=='string'||!principal.userId||principal.read!==true)fail('READ_DENIED');\n  if(!Array.isArray(rows))fail('INVALID_ROWS');\n  const ids=new Set();\n  for(const row of rows){\n    if(!row||Object.prototype.toString.call(row)!=='[object Object]'||Object.getOwnPropertySymbols(row).length)fail('INVALID_ROWS');\n    const descriptors=Object.getOwnPropertyDescriptors(row);\n    if(Object.keys(descriptors).length!==columns.length||columns.some(column=>!Object.hasOwn(descriptors,column)||!Object.hasOwn(descriptors[column],'value')||descriptors[column].enumerable!==true||typeof descriptors[column].value!=='string'||!descriptors[column].value.trim())||!['Yes','No'].includes(row.Active)||ids.has(row.ID))fail('INVALID_ROWS');\n    ids.add(row.ID);\n  }\n  if(!query||!columns.includes(query.query_column)||typeof query.query_value!=='string'||!query.query_value.trim()||query.query_value.length>200)fail('INVALID_QUERY');\n  return baselineLookup(rows,query.query_column,query.query_value).map(row=>({...row}));\n}\n\nconst input=$input.first().json;return volunteerLookup(input.rows,input.query,input.principal).map(row=>({json:{...row,scope:\"Invented local records; read authority is a fixture, no external provider is called\"}}));"
+      },
+      "name": "Validated volunteer lookup",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        480,
+        0
+      ],
+      "id": "public-record-node-3"
+    }
+  ],
+  "connections": {
+    "Run invented lookup fixture": {
+      "main": [
+        [
+          {
+            "node": "Invented volunteer rows",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Invented volunteer rows": {
+      "main": [
+        [
+          {
+            "node": "Validated volunteer lookup",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  }
+}

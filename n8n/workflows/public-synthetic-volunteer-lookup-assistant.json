@@ -1,0 +1,204 @@
+{
+  "name": "Volunteer Lookup Assistant",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "synthetic-node-1",
+      "name": "When chat message received",
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        0,
+        0
+      ],
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.chatInput }}",
+        "options": {
+          "systemMessage": "Practice volunteer lookup using these exact sheet headings: ID, Full Name, First Name, Last Name, Phone, Email, Events, Manager, Active. Treat multiple lookup matches as ambiguous. Do not infer permission to update from lookup results. Provider-dependent practice only; no completed automation claim."
+        }
+      },
+      "id": "synthetic-node-2",
+      "name": "Chat Lookup Agent",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2,
+      "position": [
+        288,
+        0
+      ],
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "trigger": [
+          "app_mention"
+        ],
+        "channelId": {
+          "__rl": true,
+          "value": "",
+          "mode": "id"
+        },
+        "options": {}
+      },
+      "id": "synthetic-node-3",
+      "name": "Slack Trigger",
+      "type": "n8n-nodes-base.slackTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        320
+      ],
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.text }}",
+        "options": {
+          "systemMessage": "Practice volunteer lookup using these exact sheet headings: ID, Full Name, First Name, Last Name, Phone, Email, Events, Manager, Active. Treat multiple lookup matches as ambiguous. Do not infer permission to update from lookup results. Provider-dependent practice only; no completed automation claim."
+        }
+      },
+      "id": "synthetic-node-4",
+      "name": "Slack Lookup Agent",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2,
+      "position": [
+        288,
+        320
+      ],
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4o-mini",
+          "mode": "list",
+          "cachedResultName": "gpt-4o-mini"
+        },
+        "options": {}
+      },
+      "id": "synthetic-node-5",
+      "name": "OpenAI Chat Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        288,
+        608
+      ],
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "sseEndpoint": "",
+        "options": {}
+      },
+      "id": "synthetic-node-6",
+      "name": "MCP Client Tool",
+      "type": "@n8n/n8n-nodes-langchain.mcpClientTool",
+      "typeVersion": 1,
+      "position": [
+        528,
+        608
+      ],
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "value": "",
+          "mode": "id"
+        },
+        "text": "={{ $json.output }}",
+        "otherOptions": {}
+      },
+      "id": "synthetic-node-7",
+      "name": "Slack Reply - provider pending",
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.3,
+      "position": [
+        672,
+        320
+      ],
+      "disabled": true
+    }
+  ],
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "Chat Lookup Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Slack Trigger": {
+      "main": [
+        [
+          {
+            "node": "Slack Lookup Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Slack Lookup Agent": {
+      "main": [
+        [
+          {
+            "node": "Slack Reply - provider pending",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Chat Lookup Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "Slack Lookup Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "MCP Client Tool": {
+      "ai_tool": [
+        [
+          {
+            "node": "Chat Lookup Agent",
+            "type": "ai_tool",
+            "index": 0
+          },
+          {
+            "node": "Slack Lookup Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  }
+}
