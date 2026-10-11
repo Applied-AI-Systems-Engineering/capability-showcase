@@ -10,7 +10,7 @@ The spreadsheet MCP gateway and volunteer lookup assistant are disabled topology
 
 The demos were imported and executed with n8n 2.42.6 in an isolated container with outbound networking disabled. The standalone JavaScript component and native workflow tests have distinct scopes. Fixture authority objects do not authenticate Slack users; a listener flag does not verify a production MCP listener. In-memory receipts do not establish durable replay prevention or provider writes. No Sheets, OpenAI or Slack integration was tested.
 
-CLI verification assigned temporary workflow and node identities and a temporary name prefix. Final graphs matched imported graphs after removing only those test identities. Editor imports can assign new identities automatically. Verify the reviewed file hashes against release-manifest.json before importing.
+CLI verification assigned temporary workflow and node identities and a temporary name prefix. Final graphs matched imported graphs after removing only those test identities. Editor imports can assign new identities automatically.
 
 See public-synthetic-NOTICE.md for scope and usage limits. The release review classifies only these original demonstrations, invented fixtures and instructions. It does not authorize releasing other project files.
 
