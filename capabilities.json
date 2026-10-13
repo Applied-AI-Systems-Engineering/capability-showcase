@@ -1,0 +1,47 @@
+{
+  "schema_version": 1,
+  "title": "Applied AI Systems Architecture & Engineering",
+  "scope": "Selected disconnected synthetic demonstrations",
+  "capabilities": [
+    {
+      "id": "validated-state",
+      "documentation": "langgraph/README.md",
+      "source": [
+        "langgraph/local_graph.py",
+        "langgraph/order_preview.py"
+      ],
+      "verification": {
+        "workflow": ".github/workflows/verify.yml",
+        "job": "LangGraph deterministic tests",
+        "type": "deterministic-runtime"
+      },
+      "live_inference": false
+    },
+    {
+      "id": "synthetic-record-workflows",
+      "documentation": "n8n/verification/PUBLIC-RELEASE.md",
+      "source": [
+        "n8n/workflows/public-synthetic-record-lookup-filtering.json",
+        "n8n/workflows/public-synthetic-synthetic-lifecycle.json",
+        "n8n/workflows/public-synthetic-guard-assertions-synthetic.json"
+      ],
+      "verification": {
+        "workflow": ".github/workflows/verify.yml",
+        "job": "n8n synthetic execution",
+        "type": "native-runtime",
+        "external_network": false
+      },
+      "provider_integration": false
+    },
+    {
+      "id": "integration-topologies",
+      "documentation": "n8n/verification/PUBLIC-RELEASE.md",
+      "source": [
+        "n8n/workflows/public-synthetic-spreadsheet-mcp-gateway.json",
+        "n8n/workflows/public-synthetic-volunteer-lookup-assistant.json"
+      ],
+      "status": "disabled-templates",
+      "runtime_verified": false
+    }
+  ]
+}
