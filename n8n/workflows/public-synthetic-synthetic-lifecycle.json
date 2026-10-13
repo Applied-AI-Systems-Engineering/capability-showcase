@@ -1,0 +1,46 @@
+{
+  "name": "Record Lookup and Update Demo",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "synthetic-node-1",
+      "name": "Run synthetic demo",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const columns=['ID','name','skill','status'];\nconst statuses=['available','busy','inactive'];\nconst fail=code=>{throw new Error(code)};\nconst same=(a,b)=>JSON.stringify(a)===JSON.stringify(b);\nfunction authority(p,write=false){if(!p||typeof p.userId!=='string'||!p.userId||p.read!==true)fail('READ_DENIED');if(write&&p.write!==true)fail('WRITE_DENIED');}\nconst record=r=>r!==null&&typeof r==='object'&&Object.prototype.toString.call(r)==='[object Object]'&&Object.getOwnPropertySymbols(r).length===0;\nfunction copyReceipt(r){if(!record(r)||Object.keys(r).length!==4||!['requestId','fingerprint','row','principal'].every(k=>Object.hasOwn(r,k))||['requestId','fingerprint','principal'].some(k=>typeof r[k]!=='string'||!r[k]))fail('INVALID_RECEIPT');schema([r.row]);return {requestId:r.requestId,fingerprint:r.fingerprint,row:{...r.row},principal:r.principal};}\nfunction schema(rows){if(!Array.isArray(rows))fail('INVALID_ROWS');const seen=new Set();for(const r of rows){if(!record(r)||columns.some(c=>!Object.hasOwn(r,c)||typeof r[c]!=='string'||!r[c].trim())||Object.getOwnPropertyNames(r).some(c=>!columns.includes(c))||columns.some(c=>!Object.hasOwn(Object.getOwnPropertyDescriptor(r,c),'value')||Object.getOwnPropertyDescriptor(r,c).enumerable!==true)||!statuses.includes(r.status)||seen.has(r.ID))fail('INVALID_ROWS');seen.add(r.ID);}}\nfunction changes(patch){if(!patch||Array.isArray(patch)||typeof patch!=='object'||!Object.keys(patch).length||Object.keys(patch).some(k=>!['skill','status'].includes(k)||typeof patch[k]!=='string'||!patch[k].trim()||patch[k].length>200)||(Object.hasOwn(patch,'status')&&!statuses.includes(patch.status)))fail('INVALID_UPDATE');}\nfunction lookup(rows,q,p){authority(p);schema(rows);if(!q||!columns.includes(q.query_column)||typeof q.query_value!=='string'||!q.query_value.trim()||q.query_value.length>200)fail('INVALID_QUERY');const value=q.query_value.trim().toLowerCase();return rows.filter(r=>q.query_column==='ID'?r.ID===q.query_value:r[q.query_column].toLowerCase().includes(value)).map(r=>({...r}));}\nfunction preview(rows,q,patch,p){authority(p,true);changes(patch);const matches=lookup(rows,q,p);if(!matches.length)fail('NOT_FOUND');if(matches.length!==1)fail('AMBIGUOUS');const before=matches[0];return {version:1,principal:p.userId,rowId:before.ID,before,after:{...before,...patch},patch:{...patch}};}\nfunction createState(rows){schema(rows);return {rows:rows.map(r=>({...r})),receipts:[]};}\nfunction commit(state,plan,p,requestId,listenerReady){authority(p,true);if(listenerReady!==true)fail('LISTENER_UNAVAILABLE');if(typeof requestId!=='string'||!requestId.trim()||requestId.length>100)fail('INVALID_REQUEST');if(!plan||plan.version!==1||plan.principal!==p.userId)fail('PRINCIPAL_MISMATCH');changes(plan.patch);if(!plan.before||!plan.after||plan.rowId!==plan.before.ID||plan.rowId!==plan.after.ID||!same(plan.after,{...plan.before,...plan.patch}))fail('INVALID_PREVIEW');schema([plan.before]);schema([plan.after]);schema(state.rows);const fingerprint=JSON.stringify({plan,userId:p.userId});const old=state.receipts.find(r=>r.requestId===requestId);if(old){if(old.fingerprint!==fingerprint)fail('REQUEST_CONFLICT');return copyReceipt(old);}\nconst index=state.rows.findIndex(r=>r.ID===plan.rowId);if(index<0||!same(state.rows[index],plan.before))fail('STALE_PREVIEW');state.rows[index]={...plan.after};const receipt={requestId,fingerprint,row:{...plan.after},principal:p.userId};state.receipts.push(receipt);return copyReceipt(receipt);}\n\nconst i=$input.first().json;\nconst rows=[{\"ID\":\"S001\",\"name\":\"Alex Example\",\"skill\":\"gardening\",\"status\":\"available\"},{\"ID\":\"S002\",\"name\":\"Alex Sample\",\"skill\":\"driving\",\"status\":\"available\"}]; const p={userId:\"synthetic-writer\",read:true,write:true};const state=createState(rows);const plan=preview(rows,{query_column:\"ID\",query_value:\"S001\"},{status:\"busy\"},p);return [{json:{preview:plan,receipt:commit(state,plan,p,\"synthetic-demo-1\",true),scope:\"Synthetic per-execution state only; no external writes\"}}];"
+      },
+      "id": "synthetic-node-2",
+      "name": "Validated synthetic-lifecycle",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        288,
+        0
+      ]
+    }
+  ],
+  "connections": {
+    "Run synthetic demo": {
+      "main": [
+        [
+          {
+            "node": "Validated synthetic-lifecycle",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  }
+}
