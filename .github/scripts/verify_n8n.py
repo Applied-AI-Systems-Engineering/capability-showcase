@@ -56,7 +56,10 @@ def main():
         for node in workflow["nodes"]:
             node["id"] = str(uuid.uuid4())
         with tempfile.TemporaryDirectory() as folder:
-            pathlib.Path(folder, "workflow.json").write_text(json.dumps(workflow))
+            pathlib.Path(folder).chmod(0o755)
+            fixture = pathlib.Path(folder, "workflow.json")
+            fixture.write_text(json.dumps(workflow))
+            fixture.chmod(0o644)
             command = [
                 "docker", "run", "--rm", "--network", "none",
                 "--memory", "2g", "--cpus", "2",
