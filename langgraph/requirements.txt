@@ -1,2 +1,2 @@
 -c requirements-lock.txt
-langgraph==0.2.59
+langgraph==1.2.14

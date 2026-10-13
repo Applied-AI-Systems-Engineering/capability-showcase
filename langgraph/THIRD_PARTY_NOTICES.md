@@ -1,8 +1,12 @@
 # Third-party notices
 
-These examples import LangGraph as an external dependency; no third-party implementation is vendored. LangGraph 0.2.59 is distributed under the MIT license. Its installed package license is reproduced below for reference. Other installed dependencies retain their own package licenses. This notice does not select a license for the example source.
+These examples import LangGraph as an external dependency; no third-party implementation is vendored. LangGraph 1.2.14 is distributed under the MIT license. Its MIT license text, verified against the official 1.2.14 release tag, is reproduced below for reference. Other installed dependencies retain their own package licenses. This notice does not select a license for the example source.
 
 Project: https://github.com/langchain-ai/langgraph
+
+Verified license source: https://github.com/langchain-ai/langgraph/blob/1.2.14/libs/langgraph/LICENSE
+
+Verified on: 2026-10-13
 
 MIT License
 
