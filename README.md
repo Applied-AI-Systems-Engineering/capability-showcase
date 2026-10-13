@@ -1,5 +1,7 @@
 # Applied AI Systems Architecture & Engineering
 
+[![Verify public capabilities](https://github.com/Khemology/capability-showcase/actions/workflows/verify.yml/badge.svg)](https://github.com/Khemology/capability-showcase/actions/workflows/verify.yml)
+
 Selected demonstrations of validated workflows, stateful execution and tool integration. Each capability includes its execution instructions, evidence scope and current limitations.
 
 Public examples use synthetic data and remain disconnected from private systems.
@@ -24,6 +26,12 @@ Tests and historical verification have specific scopes. Source files, hashes and
 - Release-eligible private development is separate from this public showcase.
 - Permanently private products, credentials, runtime state and internal governance remain outside this repository.
 - GitHub publication does not authorize access to private systems or bypass network isolation.
+
+## Automated verification
+
+[GitHub Actions](https://github.com/Khemology/capability-showcase/actions/workflows/verify.yml) runs the LangGraph deterministic tests and the three manual n8n demonstrations. n8n executes in disposable containers with external networking disabled and no provider credentials. The verifier checks lookup results, the synthetic state change, and the 13- and 14-assertion guard summaries. The two disabled topology templates remain outside runtime verification.
+
+Dependency updates are proposed through pull requests for review. A passing workflow verifies these specific demonstrations; it does not certify private products or production integrations.
 
 ## Contributions and review
 
