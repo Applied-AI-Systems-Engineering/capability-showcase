@@ -9,7 +9,13 @@ root = Path(__file__).resolve().parents[2]
 paths = [root / name for name in ("README.md", "AGENTS.md", "SECURITY.md", "capabilities.json")]
 for folder in ("langgraph", "n8n"):
     paths.extend(path for path in (root / folder).rglob("*") if path.is_file() and path.suffix in (".py", ".json", ".md", ".txt"))
-paths.extend(root / name for name in (".github/workflows/verify.yml", ".github/scripts/verify_n8n.py"))
+paths.extend(root / name for name in (
+    ".github/workflows/verify.yml",
+    ".github/scripts/verify_n8n.py",
+    ".github/scripts/package_capabilities.py",
+    ".github/scripts/validate_capabilities.py",
+    ".github/scripts/test_validate_capabilities.py",
+))
 paths = sorted(set(paths))
 if any(path.is_symlink() for path in paths):
     raise RuntimeError("Symlinks are excluded from distribution")
