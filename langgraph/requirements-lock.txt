@@ -11,7 +11,7 @@ jsonpointer==3.2.0
 langchain-core==0.3.63
 langgraph==0.2.59
 langgraph-checkpoint==2.1.2
-langgraph-sdk==0.1.74
+langgraph-sdk==0.4.4
 langsmith==0.2.11
 orjson==3.13.0
 ormsgpack==1.12.2
