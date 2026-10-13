@@ -1,0 +1,11 @@
+version: 2
+updates:
+  - package-ecosystem: pip
+    directory: /langgraph
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 3
+    groups:
+      graph-dependencies:
+        patterns:
+          - '*'
