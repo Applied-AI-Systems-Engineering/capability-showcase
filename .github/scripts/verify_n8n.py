@@ -6,7 +6,7 @@ import tempfile
 import uuid
 
 ROOT = pathlib.Path(__file__).resolve().parents[2]
-IMAGE = "n8nio/n8n:2.42.6"
+IMAGE = "n8nio/n8n:2.42.6@sha256:526daa38b68e923cc00c5280d18b4da5d489f115a73bdbf3b8e452b184197a9a"
 CASES = [
     ("public-synthetic-record-lookup-filtering.json", "Validated volunteer lookup", "lookup"),
     ("public-synthetic-synthetic-lifecycle.json", "Validated synthetic-lifecycle", "lifecycle"),
