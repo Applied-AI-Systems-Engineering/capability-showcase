@@ -12,7 +12,7 @@ langchain-core==0.3.63
 langgraph==0.2.59
 langgraph-checkpoint==2.1.2
 langgraph-sdk==0.1.74
-langsmith==0.2.11
+langsmith==0.8.18
 orjson==3.13.0
 ormsgpack==1.12.2
 packaging==24.2
