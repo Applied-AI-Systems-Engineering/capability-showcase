@@ -12,7 +12,9 @@ Public examples use synthetic data and remain disconnected from private systems.
 | --- | --- | --- |
 | Validated state and conditional routing | [LangGraph examples](langgraph/README.md) | Two runnable local examples with deterministic tests |
 | Record lookup, filtering and guarded state changes | [n8n execution and verification notes](n8n/verification/PUBLIC-RELEASE.md) | Invented records; disconnected demonstrations |
-| MCP gateway and assistant topology | [n8n workflow files](n8n/workflows) | Disabled templates; live integration is not verified |
+| MCP gateway and assistant topology | [n8n workflow files](https://github.com/Khemology/capability-showcase/tree/main/n8n/workflows) | Disabled templates; live integration is not verified |
+
+[Machine-readable capability index](capabilities.json) identifies the published sources, documentation, verification jobs and disabled templates.
 
 ## Run and inspect
 
@@ -32,6 +34,10 @@ Tests and historical verification have specific scopes. Source files, hashes and
 [GitHub Actions](https://github.com/Khemology/capability-showcase/actions/workflows/verify.yml) runs the LangGraph deterministic tests and the three manual n8n demonstrations. n8n executes in disposable containers with external networking disabled and no provider credentials. The verifier checks lookup results, the synthetic state change, and the 13- and 14-assertion guard summaries. The two disabled topology templates remain outside runtime verification.
 
 Dependency updates are proposed through pull requests for review. A passing workflow verifies these specific demonstrations; it does not certify private products or production integrations.
+
+## Download verified examples
+
+Successful verification runs retain a ZIP, source-commit/file-hash manifest and archive checksum under the run's Artifacts section for seven days. The distribution job requires both runtime test jobs to pass. Dependencies and the n8n image are downloaded separately; the ZIP is not a complete offline runtime.
 
 ## Contributions and review
 
