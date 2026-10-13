@@ -1,8 +1,8 @@
 # Applied AI Systems Architecture & Engineering
 
-Public capability evidence for Khemology's development toward a federation of intelligences: interoperable agents, systems and applications with scoped authority and verifiable behavior.
+Selected demonstrations of validated workflows, stateful execution and tool integration. Each capability includes its execution instructions, evidence scope and current limitations.
 
-This repository presents selected demonstrations. It is one public surface of the broader direction, not the full private system. The federation direction includes nonprofit and for-profit activities; this repository makes no claim of legal status, deployed federation scale or production readiness.
+Public examples use synthetic data and remain disconnected from private systems.
 
 ## Explore the capabilities
 
