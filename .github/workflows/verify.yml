@@ -43,3 +43,23 @@ jobs:
           persist-credentials: false
       - name: Execute isolated synthetic workflows
         run: python3 .github/scripts/verify_n8n.py
+
+  distribution:
+    name: Verified public distribution
+    needs: [langgraph, n8n]
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Read verified source
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+      - name: Package selected capabilities
+        run: python3 .github/scripts/package_capabilities.py
+      - name: Retain checked distribution
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: capability-showcase-${{ github.sha }}
+          path: ${{ runner.temp }}/capability-distribution
+          if-no-files-found: error
+          retention-days: 7
