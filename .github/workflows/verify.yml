@@ -31,3 +31,15 @@ jobs:
           LANGSMITH_TRACING: 'false'
           LANGCHAIN_TRACING_V2: 'false'
         run: python -m unittest discover -s . -p 'test_*.py' -v
+
+  n8n:
+    name: n8n synthetic execution
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Read public source
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+      - name: Execute isolated synthetic workflows
+        run: python3 .github/scripts/verify_n8n.py
